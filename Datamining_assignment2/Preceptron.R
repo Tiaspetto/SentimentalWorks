@@ -71,13 +71,6 @@ grid_search <- function(data)
 
 grid_search(random_iris)
 
-data <- preprocess(binary_iris)
-classifier1 = perceptron(data[[1]], data[[2]])
-predict = sign(data[[1]]%*%classifier1)
-
-data2 <- preprocess(random_iris)
-classifier2 = perceptron(data2[[1]],data2[[2]])
-predict2 = sign(data2[[1]]%*%classifier2)
       
 
 
