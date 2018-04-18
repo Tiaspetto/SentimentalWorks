@@ -1,9 +1,22 @@
-orgData <- read.csv("ai2013_papers.csv")
+#Read data from disk and 
+orgData <- read.csv("Clustering/ai2013_papers.csv")
+orgData <- orgData[sample(nrow(orgData)), ]
+#Divided data into samples and labels
 y<-orgData[,c("type")]
 x<-orgData[,c(2,3,4,5,6,7,8,9,10,11,12)]
 
+#View data
 summary(x)
 
+#nolmalize data
+normalize <- function(x) { 
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+x<-as.data.frame(lapply(x, normalize))
+
+
+#Euclidean distance function
 Euclidean_distance <- function(sample1, sample2){
   sum_squared_distance <- 0
   for(i in (1:length(sample1))){
@@ -12,8 +25,10 @@ Euclidean_distance <- function(sample1, sample2){
   return(sum_squared_distance^(1/2))
 }
 
+#kmeans function
 mykmeans <- function(k, data){
   random_init <- round(runif(1,min=1,max=nrow(data)))
+  print(random_init)
   clusters_centroid <-matrix(0,k,ncol(data))
   clusters_centroid[1,] <-as.matrix(data[random_init, ])
   for(i in (2:k)){
@@ -66,7 +81,6 @@ mykmeans <- function(k, data){
     min_distance_index = 0
     for(j in (1:k)){
       distance = Euclidean_distance(clusters_centroid[j,], data[i,])
-      print(distance)
       if(distance < min_distance){
         min_distance = distance
         min_distance_index = j
@@ -76,11 +90,20 @@ mykmeans <- function(k, data){
   }
   return(as.factor(classfied_type))
 }
-xx <-kmeans(x,8)
+
+#run my kmeans
 my_xx<-mykmeans(8,x)
-with(orgData, pairs(x, col=c(1:8)[xx$center])) 
-summary(as.factor(xx$cluster))
-summary(y)
 summary(my_xx)
 
-plot_clus_coord(db_xx, x)
+#run kmeans and calculate silhoute
+xx <-kmeans(x,8)
+with(orgData, pairs(x, col=c(1:8)[xx$cluster]))
+library(fpc)
+stats=cluster.stats(dist(x), xx$cluster)
+silhoute <- stats$avg.silwidth
+
+#compared ground truth with clustered result
+summary(as.factor(xx$cluster))
+summary(y)
+
+

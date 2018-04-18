@@ -1,12 +1,19 @@
-orgData <- read.csv("ai2013_papers.csv")
+#Load Data
+orgData <- read.csv("Clustering/ai2013_papers.csv")
 y <- rev(levels(orgData[,c("type")]))
 x<-orgData[,c(2,3,4,5,6,7,8,9,10,11,12)]
+#Random sort data
 random_Data <- orgData[sample(nrow(orgData)), ]
 random_x <- random_Data[c(1:1290),c(2,3,4,5,6,7,8,9,10,11,12)]
 random_type <- random_Data[c(1:1290),c("type")]
 randon_y <- rev(levels(random_type))
+#load library
+library(colorspace)
+library(gplots)
+library(dendextend)
 
 d_x = dist(random_x)
+# clustering witg hclust
 hc_x <- hclust(d_x, method = "complete")
 dend <- as.dendrogram(hc_x)
 dend <- rotate(dend, 1:1290)
@@ -26,6 +33,7 @@ dend <- set(dend, "labels_cex", 0.5)
 
 some_col_func <- function(n) rev(colorspace::heat_hcl(n, c = c(80, 30), l = c(30, 90), power = c(1/5, 1.5)))
 
+#Create cluster heat map 
 gplots::heatmap.2(as.matrix(x), 
                   main = "Heatmap for the AIpapers data set",
                   srtCol = 20,
