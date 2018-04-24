@@ -92,18 +92,36 @@ mykmeans <- function(k, data){
 }
 
 #run my kmeans
-my_xx<-mykmeans(8,x)
-summary(my_xx)
+#my_xx<-mykmeans(8,x)
+#summary(my_xx)
 
-#run kmeans and calculate silhoute
+#1 Find optimal K
+fviz_nbclust(x, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method")
+
+#2 See clustering in pair of dimensions
 xx <-kmeans(x,8)
 with(orgData, pairs(x, col=c(1:8)[xx$cluster]))
 library(fpc)
+library(factoextra)
 stats=cluster.stats(dist(x), xx$cluster)
 silhoute <- stats$avg.silwidth
+print(silhoute)
+#3 Plot clustering result K=8
+fviz_cluster(xx, x, geom = "point", ellipse.type = "norm")
 
-#compared ground truth with clustered result
+#4 Compared ground truth with clustered result
 summary(as.factor(xx$cluster))
 summary(y)
+
+# Run as optimal K
+xx <-kmeans(x,2)
+table(y,xx$cluster)
+stats=cluster.stats(dist(x), xx$cluster)
+silhoute <- stats$avg.silwidth
+print(silhoute)
+fviz_cluster(xx, x, geom = "point", ellipse.type = "norm")
+#compared ground truth with clustered result
+summary(as.factor(xx$cluster))
 
 

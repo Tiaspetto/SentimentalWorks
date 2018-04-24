@@ -2,6 +2,7 @@ Iris = iris
 binary_iris = subset(Iris, Species=="versicolor" | Species =="setosa")
 random_iris = binary_iris[sample(nrow(binary_iris)), ]
 
+#Preprcess data from original dataset
 preprocess<-function(dataAndlabels)
 {
   data <- as.matrix(dataAndlabels[,1:4])
@@ -16,6 +17,7 @@ preprocess<-function(dataAndlabels)
 }
 
 
+#preceptron learning function
 perceptron <-function(data, labels, b=0, learning_rate = 0.02)
 {
   paramters <-matrix(0,4,1)
@@ -50,10 +52,11 @@ perceptron <-function(data, labels, b=0, learning_rate = 0.02)
   return(list(converged,paramters))
 }
 
+#grid_search method , for different bias value and learning rate
 grid_search <- function(data)
 {
   b_array <- seq(-1,1,0.2)
-  learning_rate <- seq(0.01,1,0.01)
+  learning_rate <- seq(0.01,20,0.01)
   ori_data <- preprocess(data)
   count_search = 0
   count_not_converged = 0
